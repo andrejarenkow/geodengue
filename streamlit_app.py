@@ -25,8 +25,8 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
     # Criando filtro de município
-    municipio = st.selectbox(label='Selecione um município:', options=df['Municipio'].unique())
-    aplicar_filtro = st.button("Aplicar Filtro")
+    municipio = st.sidebar.selectbox(label='Selecione um município:', options=df['Municipio'].unique())
+    aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
     # Aplicar o filtro apenas quando o botão for clicado
     if aplicar_filtro:
