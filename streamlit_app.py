@@ -19,12 +19,13 @@ if uploaded_file is not None:
         lon="longitude",
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
         zoom=10,
-        mapbox_style="open-street-map"
+        mapbox_style="open-street-map",
+        height = 1000
     )
     
     # Exibir o mapa
-    #st.plotly_chart(fig)
-    fig
+    st.plotly_chart(fig)
+    
     # Contar quantos valores NaN existem na coluna 'latitude' por município
     nan_por_municipio = df[df['latitude'].isna()].groupby('Municipio').size().reset_index(name='NaN_Latitude')
     
