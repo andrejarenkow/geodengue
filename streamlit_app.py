@@ -32,6 +32,7 @@ if uploaded_file is not None:
     # Centro do mapa
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
+    zoom_ini = 5.5
     
     # Aplicar o filtro apenas quando o botão for clicado
     if aplicar_filtro:
@@ -39,6 +40,7 @@ if uploaded_file is not None:
         # Centro do mapa
         lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
+        zoom_ini = 10
 
     # Criar o mapa
     fig = px.scatter_mapbox(
@@ -46,7 +48,7 @@ if uploaded_file is not None:
         lat="latitude",
         lon="longitude",
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
-        zoom=5.5,
+        zoom=zom_ini,
         mapbox_style="open-street-map",
         center={'lat': lat_center, 'lon': lon_center},
         height=800,
