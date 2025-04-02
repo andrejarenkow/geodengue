@@ -2,8 +2,18 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-# Título do painel
-st.title("Mapa de Endereços com Coordenadas")
+# Configurações da página
+st.set_page_config(
+    page_title="Geodengue",
+    page_icon="	:bug:",
+    layout="wide",
+    initial_sidebar_state='expanded'
+) 
+col1, col2, col3 = st.columns([1,4,1])
+
+col1.image('https://github.com/andrejarenkow/csv/blob/master/logo_cevs%20(2).png?raw=true', width=100)
+col2.header('Coordenadas Notificacoes Dengue')
+col3.image('https://github.com/andrejarenkow/csv/blob/master/logo_estado%20(3)%20(1).png?raw=true', width=150)
 
 # Upload do arquivo CSV
 uploaded_file = st.file_uploader("Envie um arquivo CSV", type=["csv"])
