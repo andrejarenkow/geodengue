@@ -24,6 +24,21 @@ if uploaded_file is not None:
     # Carregar o arquivo CSV
     df = pd.read_csv(uploaded_file)
 
+    # Alterando o Class_fin
+    df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
+
+    dicionario_classifi = {
+        '5.0':'Descartado',
+        '10.0':'Dengue',
+        '11.0':'Dengue com sinais de alarme',
+        '12.0':'Dengue grave',
+        '13.0':'Chikungunya',
+        '8.0':'Fechado pelo sistema'
+    }
+
+    # Substituindo com o replace
+    df['CLASSI_FIN'] = df['CLASSI_FIN'].replace(dicionario_classifi)
+
     # Criando filtro de município na sidebar
     st.sidebar.header("Filtro de Município")
     municipio = st.sidebar.selectbox(label='Selecione um município:', options=df['Municipio'].unique())
@@ -52,7 +67,8 @@ if uploaded_file is not None:
         mapbox_style="open-street-map",
         center={'lat': lat_center, 'lon': lon_center},
         height=800,
-        width=800
+        width=800,
+        color = 'CLASSI_FIN'
     )
 
     # Exibir o mapa
