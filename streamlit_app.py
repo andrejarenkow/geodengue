@@ -13,8 +13,8 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
     # Centro
-    lat_center = (df['latitude'].max() - df['latitude'].min())/2
-    lon_center = (df['longitude'].max() - df['longitude'].min())/2
+    lat_center = (df['latitude'].max() + df['latitude'].min())/2
+    lon_center = (df['longitude'].max() + df['longitude'].min())/2
     
     # Criar o mapa
     fig = px.scatter_mapbox(
