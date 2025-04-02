@@ -62,12 +62,13 @@ if uploaded_file is not None:
         df,
         lat="latitude",
         lon="longitude",
-        hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
+        hover_name='endereco',  # Nome da primeira coluna para exibição no hover
         zoom=zoom_ini,
         mapbox_style="open-street-map",
         center={'lat': lat_center, 'lon': lon_center},
         height=800,
         width=800,
+        opacity = 0.8,
         color = 'CLASSI_FIN',
         color_discrete_map = {
             'Descartado': 'grey',
