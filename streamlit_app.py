@@ -11,6 +11,10 @@ uploaded_file = st.file_uploader("Envie um arquivo CSV", type=["csv"])
 if uploaded_file is not None:
     # Carregar o arquivo CSV
     df = pd.read_csv(uploaded_file)
+
+    # Centro
+    lat_center = df['latitude'].max() - df['latitude'].min()
+    lon_center = df['longitude'].max() - df['longitude'].min()
     
     # Criar o mapa
     fig = px.scatter_mapbox(
@@ -20,6 +24,7 @@ if uploaded_file is not None:
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
         zoom=5.5,
         mapbox_style="open-street-map",
+        center = {'lat':lat_center,'lon':lon_center},
         height = 800,
         width = 800
     )
