@@ -23,8 +23,8 @@ if uploaded_file is not None:
     )
     
     # Exibir o mapa
-    st.plotly_chart(fig)
-    
+    #st.plotly_chart(fig)
+    fig
     # Contar quantos valores NaN existem na coluna 'latitude' por município
     nan_por_municipio = df[df['latitude'].isna()].groupby('Municipio').size().reset_index(name='NaN_Latitude')
     
