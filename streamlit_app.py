@@ -29,13 +29,16 @@ if uploaded_file is not None:
     municipio = st.sidebar.selectbox(label='Selecione um município:', options=df['Municipio'].unique())
     aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
-    # Aplicar o filtro apenas quando o botão for clicado
-    if aplicar_filtro:
-        df = df[df['Municipio'] == municipio]
-
     # Centro do mapa
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
+    
+    # Aplicar o filtro apenas quando o botão for clicado
+    if aplicar_filtro:
+        df = df[df['Municipio'] == municipio]
+        # Centro do mapa
+        lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
+        lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
 
     # Criar o mapa
     fig = px.scatter_mapbox(
