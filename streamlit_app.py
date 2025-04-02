@@ -18,7 +18,7 @@ if uploaded_file is not None:
         lat="latitude",
         lon="longitude",
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
-        zoom=10,
+        zoom=5.5,
         mapbox_style="open-street-map",
         height = 1000
     )
