@@ -44,6 +44,9 @@ if uploaded_file is not None:
     municipio = st.sidebar.selectbox(label='Selecione um município:', options=df['Municipio'].unique())
     aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
+    # Opção para mapa de calor
+    mapa_calor = st.sidebar.checkbox("Exibir como mapa de calor")
+
     # Centro do mapa
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
@@ -58,28 +61,42 @@ if uploaded_file is not None:
         zoom_ini = 10
 
     # Criar o mapa
-    fig = px.scatter_mapbox(
-        df,
-        lat="latitude",
-        lon="longitude",
-        hover_name='endereco',  # Nome da primeira coluna para exibição no hover
-        zoom=zoom_ini,
-        mapbox_style="open-street-map",
-        center={'lat': lat_center, 'lon': lon_center},
-        height=800,
-        width=800,
-        opacity = 0.8,
-        color = 'CLASSI_FIN',
-        color_discrete_map = {
-            'Descartado': 'grey',
-            'Dengue': 'orange',
-            'Dengue com sinais de alarme': 'red',
-            'Dengue grave': 'black',
-            'Chikungunya': 'blue',
-            'Fechado pelo sistema': 'grey',
-            'Em investigação':'purple'
-    }
-    )
+    if mapa_calor:
+        fig = px.density_mapbox(
+            df,
+            lat="latitude",
+            lon="longitude",
+            z=None,
+            radius=10,
+            mapbox_style="open-street-map",
+            center={'lat': lat_center, 'lon': lon_center},
+            zoom=5.5,
+            height=800,
+            width=800
+        )
+    else:
+        fig = px.scatter_mapbox(
+            df,
+            lat="latitude",
+            lon="longitude",
+            hover_name='endereco',  # Nome da primeira coluna para exibição no hover
+            zoom=zoom_ini,
+            mapbox_style="open-street-map",
+            center={'lat': lat_center, 'lon': lon_center},
+            height=800,
+            width=800,
+            opacity = 0.8,
+            color = 'CLASSI_FIN',
+            color_discrete_map = {
+                'Descartado': 'grey',
+                'Dengue': 'orange',
+                'Dengue com sinais de alarme': 'red',
+                'Dengue grave': 'black',
+                'Chikungunya': 'blue',
+                'Fechado pelo sistema': 'grey',
+                'Em investigação':'purple'
+        }
+        )
 
     # Exibir o mapa
     st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
