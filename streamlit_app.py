@@ -48,7 +48,7 @@ if uploaded_file is not None:
         lat="latitude",
         lon="longitude",
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
-        zoom=zom_ini,
+        zoom=zoim_ini,
         mapbox_style="open-street-map",
         center={'lat': lat_center, 'lon': lon_center},
         height=800,
