@@ -70,7 +70,7 @@ if uploaded_file is not None:
             radius=10,
             mapbox_style="open-street-map",
             center={'lat': lat_center, 'lon': lon_center},
-            zoom=5.5,
+            zoom=zoom_ini,
             height=800,
             width=800
         )
