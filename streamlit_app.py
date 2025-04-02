@@ -44,13 +44,16 @@ if uploaded_file is not None:
     
     linha_total = pd.DataFrame({
         'Municipio': ['TOTAL'],
-        'Não achados': [total_nan],
-        'Total Notificações': [total_registros],
-        'Porcentagem Não achados': [total_percentual]
+        'NaN_Latitude': [total_nan],
+        'Total_Registros': [total_registros],
+        '% NaN': [total_percentual]
     })
     
     # Concatenar com o DataFrame original
     resultado = pd.concat([resultado, linha_total], ignore_index=True)
+
+    # renomeando as coluans
+    resultado.columns = ['Município','Não achados', 'Total notificações', 'Porcentagem']
     
     # Exibir o resultado
     st.dataframe(resultado)
