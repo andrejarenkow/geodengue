@@ -15,8 +15,9 @@ col1.image('https://github.com/andrejarenkow/csv/blob/master/logo_cevs%20(2).png
 col2.header('Coordenadas Notificacoes Dengue')
 col3.image('https://github.com/andrejarenkow/csv/blob/master/logo_estado%20(3)%20(1).png?raw=true', width=150)
 
-# Upload do arquivo CSV
-uploaded_file = st.file_uploader("Envie um arquivo CSV", type=["csv"])
+# Sidebar para upload do arquivo
+st.sidebar.header("Upload do Arquivo")
+uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 
 if uploaded_file is not None:
     # Carregar o arquivo CSV
