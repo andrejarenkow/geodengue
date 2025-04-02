@@ -56,5 +56,5 @@ if uploaded_file is not None:
     resultado.columns = ['Município','Não achados', 'Total notificações', 'Porcentagem']
     
     # Exibir o resultado
-    st.dataframe(resultado)
+    st.dataframe(resultado, hide_index = True)
 
