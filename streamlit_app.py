@@ -20,7 +20,8 @@ if uploaded_file is not None:
         hover_name=df.columns[0],  # Nome da primeira coluna para exibição no hover
         zoom=5.5,
         mapbox_style="open-street-map",
-        height = 1000
+        height = 800,
+        width = 800
     )
     
     # Exibir o mapa
