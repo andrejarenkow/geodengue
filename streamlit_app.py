@@ -68,7 +68,16 @@ if uploaded_file is not None:
         center={'lat': lat_center, 'lon': lon_center},
         height=800,
         width=800,
-        color = 'CLASSI_FIN'
+        color = 'CLASSI_FIN',
+        color_discrete_map = {
+            'Descartado': 'grey',
+            'Dengue': 'orange',
+            'Dengue com sinais de alarme': 'red',
+            'Dengue grave': 'black',
+            'Chikungunya': 'blue',
+            'Fechado pelo sistema': 'grey',
+            'Em investigação':'purple'
+    }
     )
 
     # Exibir o mapa
