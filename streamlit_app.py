@@ -79,7 +79,8 @@ if uploaded_file is not None:
             df,
             lat="latitude",
             lon="longitude",
-            hover_name='endereco',  # Nome da primeira coluna para exibição no hover
+            hover_name='endereco',
+            hover_data = df.columns
             zoom=zoom_ini,
             mapbox_style="open-street-map",
             center={'lat': lat_center, 'lon': lon_center},
