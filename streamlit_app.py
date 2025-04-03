@@ -33,8 +33,8 @@ if uploaded_file is not None:
     # Filtrando apenas dados de 2025
     df = df[df['DT_SIN_PRI'].dt.year == 2025]
 
-    # Criar uma coluna cumulativa
-    #df["Cumulativo"] = df["DT_SIN_PRI"].apply(lambda x: df[df["DT_SIN_PRI"] <= x])
+    # Criar a coluna de Semana Epidemiológica
+    df["Semana_Epidemiologica"] = df["DT_SIN_PRI"].dt.strftime('%Y-%U')  # Formato "Ano-Semana"
 
     # Ordenar os dados pela data
     df = df.sort_values(by="DT_SIN_PRI")
@@ -99,7 +99,7 @@ if uploaded_file is not None:
             height=800,
             width=800,
             opacity = 0.8,
-            animation_frame="DT_SIN_PRI",  # Animação baseada na data
+            animation_frame="Semana_Epidemiologica",  # Animação baseada na data
             color = 'CLASSI_FIN',
             color_discrete_map = {
                 'Descartado': 'grey',
