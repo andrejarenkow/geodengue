@@ -34,7 +34,7 @@ if uploaded_file is not None:
     df = df[df['DT_SIN_PRI'].dt.year == 2025]
 
     # Criar uma coluna cumulativa
-    df["Cumulativo"] = df["DT_SIN_PRI"].apply(lambda x: df[df["DT_SIN_PRI"] <= x])
+    #df["Cumulativo"] = df["DT_SIN_PRI"].apply(lambda x: df[df["DT_SIN_PRI"] <= x])
 
     # Ordenar os dados pela data
     df = df.sort_values(by="DT_SIN_PRI")
@@ -88,7 +88,7 @@ if uploaded_file is not None:
         )
     else:
         fig = px.scatter_mapbox(
-            df.explode("Cumulativo"),
+            df,
             lat="latitude",
             lon="longitude",
             hover_name='endereco',
