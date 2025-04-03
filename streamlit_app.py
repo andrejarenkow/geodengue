@@ -162,3 +162,10 @@ if uploaded_file is not None:
 
     # Exibir o resultado
     st.dataframe(resultado, hide_index=True)
+
+    # Exibir dataframe dos NaN
+    df_nan = df[df['latitude'].isna()].reset_index(drop=True)
+
+    # Exibir o resultado
+    st.dataframe(df_nan, hide_index=True)
+    
