@@ -27,6 +27,18 @@ if uploaded_file is not None:
     # Alterando o Class_fin
     df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
 
+     # Converter a coluna DT_SIN_PRI para datetime
+    df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
+
+    # Filtrando apenas dados de 2025
+    df = df[df['DT_SIN_PRI'].dt.year == 2025]
+
+    # Criar uma coluna cumulativa
+    df["Cumulativo"] = df["DT_SIN_PRI"].apply(lambda x: df[df["DT_SIN_PRI"] <= x])
+
+    # Ordenar os dados pela data
+    df = df.sort_values(by="DT_SIN_PRI")
+
     dicionario_classifi = {
         '5.0':'Descartado',
         '10.0':'Dengue',
@@ -76,7 +88,7 @@ if uploaded_file is not None:
         )
     else:
         fig = px.scatter_mapbox(
-            df,
+            df.explode("Cumulativo"),
             lat="latitude",
             lon="longitude",
             hover_name='endereco',
@@ -95,7 +107,7 @@ if uploaded_file is not None:
                 'Dengue com sinais de alarme': 'red',
                 'Dengue grave': 'black',
                 'Chikungunya': 'blue',
-                'Fechado pelo sistema': 'grey',
+                'Fechado pelo sistema': 'green',
                 'Em investigação':'purple'
         }
         )
