@@ -59,8 +59,8 @@ if uploaded_file is not None:
     # Opção para mapa de calor
     mapa_calor = st.sidebar.checkbox("Exibir como mapa de calor")
 
-    # Opção para ativar/desativar animação
-    usar_animacao = st.sidebar.checkbox("Ativar animação")
+    # Opção para ativar/desativar animação cumulativa
+    usar_animacao = st.sidebar.checkbox("Ativar animação cumulativa")
 
     # Centro do mapa
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
@@ -73,6 +73,18 @@ if uploaded_file is not None:
         lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
         zoom_ini = 10
+
+    # Criar um DataFrame cumulativo para animação
+    if usar_animacao:
+        semanas_unicas = sorted(df["Semana_Epidemiologica"].unique())
+        df_cumulativo = pd.DataFrame()
+
+        for semana in semanas_unicas:
+            df_temp = df[df["Semana_Epidemiologica"] <= semana].copy()
+            df_temp["Semana_Cumulativa"] = semana
+            df_cumulativo = pd.concat([df_cumulativo, df_temp])
+
+        df = df_cumulativo  # Usar a versão acumulada para o gráfico
 
     # Criar o mapa
     if mapa_calor:
@@ -111,7 +123,7 @@ if uploaded_file is not None:
             }
         }
         if usar_animacao:
-            params["animation_frame"] = "Semana_Epidemiologica"
+            params["animation_frame"] = "Semana_Cumulativa"
 
         fig = px.scatter_mapbox(df, **params)
 
