@@ -87,6 +87,7 @@ if uploaded_file is not None:
             height=800,
             width=800,
             opacity = 0.8,
+            animation_frame="DT_SIN_PRI",  # Animação baseada na data
             color = 'CLASSI_FIN',
             color_discrete_map = {
                 'Descartado': 'grey',
