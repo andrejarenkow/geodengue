@@ -67,6 +67,7 @@ if uploaded_file is not None:
             labels={"color": "Número de notificações"},
             min_count=1,
             color_continuous_scale="Viridis",
+            map_style="open-street-map",
             show_original_data=True,
             original_data_marker=dict(size=4, opacity=0.4, color="deeppink"),
             center={"lat": lat_center, "lon": lon_center},
@@ -76,14 +77,14 @@ if uploaded_file is not None:
         )
 
     else:
-        fig = px.scatter_mapbox(
+        fig = px.scatter_map(
             df,
             lat="latitude",
             lon="longitude",
             hover_name="endereco",
             hover_data=df.columns,
             zoom=zoom_ini,
-            mapbox_style="open-street-map",
+            map_style="open-street-map",
             center={"lat": lat_center, "lon": lon_center},
             height=800,
             width=800,
