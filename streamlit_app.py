@@ -58,7 +58,7 @@ if uploaded_file is not None:
         lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
         zoom_ini = 10
-        n_hex = 20
+        n_hex = 30
 
     st.subheader("Corrigir coordenadas (latitude/longitude)")
     df_para_editar = df[
