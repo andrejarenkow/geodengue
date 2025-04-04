@@ -133,7 +133,7 @@ if uploaded_file is not None:
         if usar_animacao:
             params["animation_frame"] = "Semana_Cumulativa"
 
-        fig = px.scatter_mapbox(df, **params)
+        fig = px.scatter_map(df, **params)
 
     st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
 
