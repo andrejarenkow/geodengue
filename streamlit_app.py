@@ -117,7 +117,8 @@ if uploaded_file is not None:
             mapbox_style='open-street-map',
             zoom=zoom_ini,
             height=800,
-            width=800
+            width=800,
+            range_color = [1,10]
         )
     else:
         params = {
