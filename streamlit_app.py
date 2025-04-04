@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.figure_factory as ff  # Import necessário para hexbin
 import streamlit as st
 from streamlit_plotly_events import plotly_events
+import pydeck as pdk
 
 # Configurações da página
 st.set_page_config(
