@@ -1,27 +1,44 @@
 import pandas as pd
+import plotly.express as px
 import streamlit as st
-import pydeck as pdk
 
-# Configuração da página
-st.set_page_config(page_title="Geodengue - Pydeck", layout="wide")
+# Configurações da página
+st.set_page_config(
+    page_title="Geodengue",
+    page_icon=":bug:",
+    layout="wide",
+    initial_sidebar_state='expanded'
+)
 
 col1, col2, col3 = st.columns([1, 4, 1])
 col1.image('https://github.com/andrejarenkow/csv/blob/master/logo_cevs%20(2).png?raw=true', width=100)
 col2.header('Coordenadas Notificações Dengue')
 col3.image('https://github.com/andrejarenkow/csv/blob/master/logo_estado%20(3)%20(1).png?raw=true', width=150)
 
+# Sidebar para upload do arquivo
 st.sidebar.header("Upload do Arquivo")
 uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 
 if uploaded_file is not None:
-    df_original = pd.read_csv(uploaded_file)
+    # Carregar o arquivo CSV
+    df = pd.read_csv(uploaded_file)
 
-    df_original['CLASSI_FIN'] = df_original['CLASSI_FIN'].fillna('Em investigação').astype(str)
-    df_original["DT_SIN_PRI"] = pd.to_datetime(df_original["DT_SIN_PRI"], errors="coerce")
-    df_original = df_original[df_original['DT_SIN_PRI'].dt.year == 2025]
-    df_original["Semana_Epidemiologica"] = df_original["DT_SIN_PRI"].dt.strftime('%Y-%U')
-    df_original = df_original.sort_values(by="DT_SIN_PRI")
+    # Alterando o Class_fin
+    df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
 
+    # Converter a coluna DT_SIN_PRI para datetime
+    df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
+
+    # Filtrando apenas dados de 2025
+    df = df[df['DT_SIN_PRI'].dt.year == 2025]
+
+    # Criar a coluna de Semana Epidemiológica
+    df["Semana_Epidemiologica"] = df["DT_SIN_PRI"].dt.strftime('%Y-%U')  # Formato "Ano-Semana"
+
+    # Ordenar os dados pela data
+    df = df.sort_values(by="DT_SIN_PRI")
+
+    # Dicionário de classificação
     dicionario_classifi = {
         '5.0': 'Descartado',
         '10.0': 'Dengue',
@@ -31,74 +48,107 @@ if uploaded_file is not None:
         '8.0': 'Fechado pelo sistema'
     }
 
-    df_original['CLASSI_FIN'] = df_original['CLASSI_FIN'].replace(dicionario_classifi)
+    df['CLASSI_FIN'] = df['CLASSI_FIN'].replace(dicionario_classifi)
 
-    # Filtro de município
-    municipio = st.sidebar.selectbox("Selecione um município:", sorted(df_original['Municipio'].dropna().unique()))
+    # Filtros da sidebar
+    st.sidebar.header("Filtro de Município")
+    municipio = st.sidebar.selectbox(label='Selecione um município:', options=sorted(df['Municipio'].unique()))
     aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
+    mapa_calor = st.sidebar.checkbox("Exibir como mapa de calor")
+    usar_animacao = st.sidebar.checkbox("Ativar animação cumulativa")
+
+    # Coordenadas centrais
+    lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
+    lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
+    zoom_ini = 5.5
+
+    # Aplicar o filtro de município
     if aplicar_filtro:
-        df = df_original[df_original['Municipio'] == municipio].copy()
+        df = df[df['Municipio'] == municipio]
+        lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
+        lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
+        zoom_ini = 10
+
+    # Exibir editor para corrigir coordenadas inválidas
+    st.subheader("Corrigir coordenadas (latitude/longitude)")
+    df_para_editar = df[
+        df['latitude'].isna() | df['longitude'].isna() |
+        (df['latitude'] < -34) | (df['latitude'] > -27) |
+        (df['longitude'] < -58) | (df['longitude'] > -48)
+    ].copy()
+
+    if not df_para_editar.empty:
+        df_corrigido = st.data_editor(
+            df_para_editar[['endereco', 'Municipio', 'latitude', 'longitude']],
+            num_rows="dynamic",
+            use_container_width=True,
+            key="editor_corrigir_coords"
+        )
+
+        # Atualizar o DataFrame original com as correções
+        for idx in df_corrigido.index:
+            df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
+            df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
     else:
-        df = df_original.copy()
+        st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
 
-    st.subheader("Editar coordenadas diretamente na tabela")
-    editable_cols = ["latitude", "longitude", "Municipio", "endereco", "CLASSI_FIN", "DT_SIN_PRI"]
-    df_editado = st.data_editor(df[editable_cols], num_rows="dynamic", use_container_width=True)
+    # Criar DataFrame cumulativo para animação (opcional)
+    if usar_animacao:
+        semanas_unicas = sorted(df["Semana_Epidemiologica"].unique())
+        df_cumulativo = pd.DataFrame()
 
-    df.update(df_editado)
+        for semana in semanas_unicas:
+            df_temp = df[df["Semana_Epidemiologica"] <= semana].copy()
+            df_temp["Semana_Cumulativa"] = semana
+            df_cumulativo = pd.concat([df_cumulativo, df_temp])
 
-    # Filtra apenas pontos com coordenadas válidas
-    df_valid = df.dropna(subset=["latitude", "longitude"])
+        df = df_cumulativo
 
-    # Calcula centro do mapa
-    if len(df_valid) > 0:
-        lat_center = df_valid["latitude"].mean()
-        lon_center = df_valid["longitude"].mean()
+    # Criar o mapa
+    if mapa_calor:
+        fig = px.density_mapbox(
+            df,
+            lat="latitude",
+            lon="longitude",
+            radius=10,
+            mapbox_style="open-street-map",
+            center={'lat': lat_center, 'lon': lon_center},
+            zoom=zoom_ini,
+            height=800,
+            width=800
+        )
     else:
-        lat_center, lon_center = -30.0, -51.0  # fallback
+        params = {
+            "lat": "latitude",
+            "lon": "longitude",
+            "hover_name": "endereco",
+            "hover_data": df.columns,
+            "zoom": zoom_ini,
+            "mapbox_style": "open-street-map",
+            "center": {"lat": lat_center, "lon": lon_center},
+            "height": 800,
+            "width": 800,
+            "opacity": 0.8,
+            "color": "CLASSI_FIN",
+            "color_discrete_map": {
+                "Descartado": "grey",
+                "Dengue": "orange",
+                "Dengue com sinais de alarme": "red",
+                "Dengue grave": "black",
+                "Chikungunya": "blue",
+                "Fechado pelo sistema": "green",
+                "Em investigação": "purple"
+            }
+        }
+        if usar_animacao:
+            params["animation_frame"] = "Semana_Cumulativa"
 
-    st.subheader("Mapa Interativo com Pydeck")
+        fig = px.scatter_mapbox(df, **params)
 
-    # Define cores por classificação
-    color_map = {
-        "Descartado": [128, 128, 128],
-        "Dengue": [255, 165, 0],
-        "Dengue com sinais de alarme": [255, 0, 0],
-        "Dengue grave": [0, 0, 0],
-        "Chikungunya": [0, 0, 255],
-        "Fechado pelo sistema": [0, 128, 0],
-        "Em investigação": [128, 0, 128],
-    }
+    st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
 
-    df_valid["color"] = df_valid["CLASSI_FIN"].map(color_map)
-
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_valid,
-        get_position='[longitude, latitude]',
-        get_fill_color="color",
-        get_radius=150,
-        pickable=True,
-        auto_highlight=True
-    )
-
-    tooltip = {
-        "html": "<b>Município:</b> {Municipio}<br/>"
-                "<b>Endereço:</b> {endereco}<br/>"
-                "<b>Classificação:</b> {CLASSI_FIN}<br/>"
-                "<b>Data:</b> {DT_SIN_PRI}",
-        "style": {"backgroundColor": "steelblue", "color": "white"}
-    }
-
-    view_state = pdk.ViewState(latitude=lat_center, longitude=lon_center, zoom=10, pitch=0)
-
-    r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
-
-    st.pydeck_chart(r)
-
-    # Resumo dos dados faltantes
-    st.markdown("### Resumo de dados faltantes por município")
+    # Tabela com percentuais de NaN
     nan_por_municipio = df[df['latitude'].isna()].groupby('Municipio').size().reset_index(name='NaN_Latitude')
     total_por_municipio = df.groupby('Municipio').size().reset_index(name='Total_Registros')
     resultado = pd.merge(nan_por_municipio, total_por_municipio, on='Municipio', how='right').fillna(0)
@@ -108,7 +158,7 @@ if uploaded_file is not None:
         'Municipio': ['TOTAL'],
         'NaN_Latitude': [resultado['NaN_Latitude'].sum()],
         'Total_Registros': [resultado['Total_Registros'].sum()],
-        '% NaN': [round((resultado['NaN_Latitude'].sum() / resultado['Total_Registros'].sum()) * 100, 2)]
+        '% NaN': [(resultado['NaN_Latitude'].sum() / resultado['Total_Registros'].sum()) * 100]
     })
 
     resultado = pd.concat([resultado, linha_total], ignore_index=True)
