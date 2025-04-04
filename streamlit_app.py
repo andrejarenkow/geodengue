@@ -181,7 +181,6 @@ if uploaded_file is not None:
             pickable=True,
             auto_highlight=True,
             id="endereco",
-            pickable=True
         )
     
     tooltip = {
