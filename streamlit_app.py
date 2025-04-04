@@ -36,12 +36,12 @@ if uploaded_file is not None:
         st.stop()
 
     # Token do Mapbox
-    try:
-        mapbox_token = open(".mapbox_token").read()
-        px.set_mapbox_access_token(mapbox_token)
-    except:
-        st.warning("Token do Mapbox não encontrado. Coloque seu token no arquivo `.mapbox_token`.")
-        mapbox_token = None
+    #try:
+        #mapbox_token = open(".mapbox_token").read()
+        #px.set_mapbox_access_token(mapbox_token)
+    #except:
+    #    st.warning("Token do Mapbox não encontrado. Coloque seu token no arquivo `.mapbox_token`.")
+    #    mapbox_token = None
 
     # Visualizações
     if usar_heatmap:
@@ -57,7 +57,7 @@ if uploaded_file is not None:
             width=800
         )
 
-    elif usar_hexbin and mapbox_token:
+    elif usar_hexbin:
         fig = ff.create_hexbin_mapbox(
             data_frame=df,
             lat="latitude",
