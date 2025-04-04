@@ -77,7 +77,7 @@ if uploaded_file is not None:
             data_frame=df,
             lat="latitude",
             lon="longitude",
-            nx_hexagon=20,
+            nx_hexagon=100,
             opacity=0.6,
             labels={"color": "Número de notificações"},
             min_count=1,
