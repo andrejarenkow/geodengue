@@ -33,12 +33,11 @@ if uploaded_file is not None:
     df = df[df['DT_SIN_PRI'].dt.year == 2025]
 
     # Criar a coluna de Semana Epidemiológica
-    df["Semana_Epidemiologica"] = df["DT_SIN_PRI"].dt.strftime('%Y-%U')  # Formato "Ano-Semana"
+    df["Semana_Epidemiologica"] = df["DT_SIN_PRI"].dt.strftime('%Y-%U')
 
     # Ordenar os dados pela data
     df = df.sort_values(by="DT_SIN_PRI")
 
-    # Dicionário de classificação
     dicionario_classifi = {
         '5.0': 'Descartado',
         '10.0': 'Dengue',
@@ -50,50 +49,27 @@ if uploaded_file is not None:
 
     df['CLASSI_FIN'] = df['CLASSI_FIN'].replace(dicionario_classifi)
 
-    # Filtros da sidebar
+    # Filtro de município
     st.sidebar.header("Filtro de Município")
     municipio = st.sidebar.selectbox(label='Selecione um município:', options=sorted(df['Municipio'].unique()))
     aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
+    # Opções de visualização
     mapa_calor = st.sidebar.checkbox("Exibir como mapa de calor")
     usar_animacao = st.sidebar.checkbox("Ativar animação cumulativa")
 
-    # Coordenadas centrais
+    # Centro do mapa
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
     zoom_ini = 5.5
 
-    # Aplicar o filtro de município
     if aplicar_filtro:
         df = df[df['Municipio'] == municipio]
         lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
         zoom_ini = 10
 
-    # Exibir editor para corrigir coordenadas inválidas
-    st.subheader("Corrigir coordenadas (latitude/longitude)")
-    df_para_editar = df[
-        df['latitude'].isna() | df['longitude'].isna() |
-        (df['latitude'] < -34) | (df['latitude'] > -27) |
-        (df['longitude'] < -58) | (df['longitude'] > -48)
-    ].copy()
-
-    if not df_para_editar.empty:
-        df_corrigido = st.data_editor(
-            df_para_editar[['endereco', 'Municipio', 'latitude', 'longitude']],
-            num_rows="dynamic",
-            use_container_width=True,
-            key="editor_corrigir_coords"
-        )
-
-        # Atualizar o DataFrame original com as correções
-        for idx in df_corrigido.index:
-            df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
-            df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
-    else:
-        st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
-
-    # Criar DataFrame cumulativo para animação (opcional)
+    # Animação cumulativa
     if usar_animacao:
         semanas_unicas = sorted(df["Semana_Epidemiologica"].unique())
         df_cumulativo = pd.DataFrame()
@@ -105,7 +81,20 @@ if uploaded_file is not None:
 
         df = df_cumulativo
 
-    # Criar o mapa
+    # Editor de coordenadas completo
+    st.subheader("Corrigir todas as coordenadas (latitude/longitude)")
+
+    df_corrigido = st.data_editor(
+        df[['endereco', 'Municipio', 'latitude', 'longitude']],
+        num_rows="dynamic",
+        use_container_width=True,
+        key="editor_todas_coords"
+    )
+
+    df['latitude'] = df_corrigido['latitude']
+    df['longitude'] = df_corrigido['longitude']
+
+    # Mapa
     if mapa_calor:
         fig = px.density_mapbox(
             df,
@@ -148,7 +137,7 @@ if uploaded_file is not None:
 
     st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
 
-    # Tabela com percentuais de NaN
+    # Estatísticas de coordenadas ausentes
     nan_por_municipio = df[df['latitude'].isna()].groupby('Municipio').size().reset_index(name='NaN_Latitude')
     total_por_municipio = df.groupby('Municipio').size().reset_index(name='Total_Registros')
     resultado = pd.merge(nan_por_municipio, total_por_municipio, on='Municipio', how='right').fillna(0)
@@ -158,9 +147,10 @@ if uploaded_file is not None:
         'Municipio': ['TOTAL'],
         'NaN_Latitude': [resultado['NaN_Latitude'].sum()],
         'Total_Registros': [resultado['Total_Registros'].sum()],
-        '% NaN': [(resultado['NaN_Latitude'].sum() / resultado['Total_Registros'].sum()) * 100]
+        '% NaN': [(resultado['NaN_Latitude'].sum() / resultado['Total_Registros'].sum()) * 100 if resultado['Total_Registros'].sum() > 0 else 0]
     })
 
     resultado = pd.concat([resultado, linha_total], ignore_index=True)
     resultado.columns = ['Município', 'Não achados', 'Total notificações', 'Porcentagem']
+
     st.dataframe(resultado, hide_index=True)
