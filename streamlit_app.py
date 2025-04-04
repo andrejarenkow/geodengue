@@ -77,7 +77,7 @@ if uploaded_file is not None:
             df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
             df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
     else:
-        st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
+        #st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
 
     if usar_animacao:
         semanas_unicas = sorted(df["Semana_Epidemiologica"].unique())
