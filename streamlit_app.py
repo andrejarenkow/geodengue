@@ -161,11 +161,11 @@ if uploaded_file is not None:
     resultado.columns = ['Município', 'Não achados', 'Total notificações', 'Porcentagem']
 
     # Exibir o resultado
-    st.data_editor(resultado, hide_index=True)
+    st.dataframe(resultado, hide_index=True)
 
     # Exibir dataframe dos NaN
     df_nan = df[df['latitude'].isna()].reset_index(drop=True)
 
     # Exibir o resultado
-    st.dataframe(df_nan, hide_index=True)
+    st.data_editor(df_nan, hide_index=True)
     
