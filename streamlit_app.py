@@ -1,8 +1,9 @@
 import pandas as pd
 import plotly.express as px
+import plotly.figure_factory as ff  # Import necessário para hexbin
 import streamlit as st
 
-# Configuração da página
+# Configurações da página
 st.set_page_config(
     page_title="Geodengue",
     page_icon=":bug:",
@@ -10,27 +11,24 @@ st.set_page_config(
     initial_sidebar_state='expanded'
 )
 
-# Cabeçalho com logos
 col1, col2, col3 = st.columns([1, 4, 1])
 col1.image('https://github.com/andrejarenkow/csv/blob/master/logo_cevs%20(2).png?raw=true', width=100)
 col2.header('Coordenadas Notificações Dengue')
 col3.image('https://github.com/andrejarenkow/csv/blob/master/logo_estado%20(3)%20(1).png?raw=true', width=150)
 
-# Upload do arquivo
+# Sidebar para upload do arquivo
 st.sidebar.header("Upload do Arquivo")
 uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 
-if uploaded_file:
+if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
-    # Conversão de datas e filtro
+    df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
     df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
     df = df[df['DT_SIN_PRI'].dt.year == 2025]
     df["Semana_Epidemiologica"] = df["DT_SIN_PRI"].dt.strftime('%Y-%U')
     df = df.sort_values(by="DT_SIN_PRI")
 
-    # Tratamento de CLASSI_FIN
-    df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
     dicionario_classifi = {
         '5.0': 'Descartado',
         '10.0': 'Dengue',
@@ -39,17 +37,17 @@ if uploaded_file:
         '13.0': 'Chikungunya',
         '8.0': 'Fechado pelo sistema'
     }
+
     df['CLASSI_FIN'] = df['CLASSI_FIN'].replace(dicionario_classifi)
 
-    # Sidebar - Filtros
     st.sidebar.header("Filtro de Município")
-    municipio = st.sidebar.selectbox('Selecione um município:', options=sorted(df['Municipio'].unique()))
+    municipio = st.sidebar.selectbox(label='Selecione um município:', options=sorted(df['Municipio'].unique()))
     aplicar_filtro = st.sidebar.button("Aplicar Filtro")
 
     mapa_calor = st.sidebar.checkbox("Exibir como mapa de calor")
+    usar_hexbin = st.sidebar.checkbox("Exibir como hexbin")  # NOVO
     usar_animacao = st.sidebar.checkbox("Ativar animação cumulativa")
 
-    # Coordenadas centrais
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
     zoom_ini = 5.5
@@ -60,7 +58,6 @@ if uploaded_file:
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
         zoom_ini = 10
 
-    # Editor para corrigir coordenadas inválidas
     st.subheader("Corrigir coordenadas (latitude/longitude)")
     df_para_editar = df[
         df['latitude'].isna() | df['longitude'].isna() |
@@ -75,13 +72,13 @@ if uploaded_file:
             use_container_width=True,
             key="editor_corrigir_coords"
         )
+
         for idx in df_corrigido.index:
             df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
             df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
     else:
         st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
 
-    # Animação cumulativa
     if usar_animacao:
         semanas_unicas = sorted(df["Semana_Epidemiologica"].unique())
         df_cumulativo = pd.DataFrame()
@@ -91,7 +88,7 @@ if uploaded_file:
             df_cumulativo = pd.concat([df_cumulativo, df_temp])
         df = df_cumulativo
 
-    # Mapa
+    # Geração do mapa
     if mapa_calor:
         fig = px.density_mapbox(
             df,
@@ -100,6 +97,24 @@ if uploaded_file:
             radius=10,
             mapbox_style="open-street-map",
             center={'lat': lat_center, 'lon': lon_center},
+            zoom=zoom_ini,
+            height=800,
+            width=800
+        )
+    elif usar_hexbin:
+        fig = ff.create_hexbin_mapbox(
+            data_frame=df,
+            lat="latitude",
+            lon="longitude",
+            nx_hexagon=20,
+            opacity=0.6,
+            labels={"color": "Número de notificações"},
+            min_count=1,
+            color_continuous_scale="Viridis",
+            show_original_data=True,
+            original_data_marker=dict(size=4, opacity=0.4, color="deeppink"),
+            center={"lat": lat_center, "lon": lon_center},
+            mapbox_style='open-street-map',
             zoom=zoom_ini,
             height=800,
             width=800
@@ -133,7 +148,6 @@ if uploaded_file:
 
     st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
 
-    # Tabela com % de coordenadas ausentes
     nan_por_municipio = df[df['latitude'].isna()].groupby('Municipio').size().reset_index(name='NaN_Latitude')
     total_por_municipio = df.groupby('Municipio').size().reset_index(name='Total_Registros')
     resultado = pd.merge(nan_por_municipio, total_por_municipio, on='Municipio', how='right').fillna(0)
