@@ -51,12 +51,14 @@ if uploaded_file is not None:
     lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
     zoom_ini = 5.5
+    n_hex = 50
 
     if aplicar_filtro:
         df = df[df['Municipio'] == municipio]
         lat_center = (df['latitude'].max() + df['latitude'].min()) / 2
         lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
         zoom_ini = 10
+        n_hex = 20
 
     st.subheader("Corrigir coordenadas (latitude/longitude)")
     df_para_editar = df[
@@ -106,7 +108,7 @@ if uploaded_file is not None:
             data_frame=df,
             lat="latitude",
             lon="longitude",
-            nx_hexagon=50,
+            nx_hexagon=n_hex,
             opacity=0.7,
             labels={"color": "Número de notificações"},
             min_count=1,
