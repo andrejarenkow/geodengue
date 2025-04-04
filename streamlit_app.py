@@ -114,7 +114,7 @@ if uploaded_file is not None:
             "hover_name": "endereco",
             "hover_data": df.columns,
             "zoom": zoom_ini,
-            "mapbox_style": "open-street-map",
+            "map_style": "open-street-map",
             "center": {"lat": lat_center, "lon": lon_center},
             "height": 800,
             "width": 800,
