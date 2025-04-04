@@ -58,14 +58,6 @@ if uploaded_file is not None:
         st.sidebar.warning("Escolha apenas um tipo de visualização.")
         st.stop()
 
-    # Token do Mapbox
-    try:
-        mapbox_token = open(".mapbox_token").read()
-        px.set_mapbox_access_token(mapbox_token)
-    except:
-        st.warning("Token do Mapbox não encontrado. Coloque seu token no arquivo `.mapbox_token`.")
-        mapbox_token = None
-
     # Visualizações
     if usar_heatmap:
         fig = px.density_mapbox(
@@ -80,7 +72,7 @@ if uploaded_file is not None:
             width=800
         )
 
-    elif usar_hexbin and mapbox_token:
+    elif usar_hexbin:
         fig = ff.create_hexbin_mapbox(
             data_frame=df,
             lat="latitude",
@@ -89,6 +81,7 @@ if uploaded_file is not None:
             opacity=0.6,
             labels={"color": "Número de notificações"},
             min_count=1,
+            mapbox_style="open-street-map",
             color_continuous_scale="Viridis",
             show_original_data=True,
             original_data_marker=dict(size=4, opacity=0.4, color="deeppink"),
