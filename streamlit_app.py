@@ -77,7 +77,7 @@ if uploaded_file is not None:
             data_frame=df,
             lat="latitude",
             lon="longitude",
-            nx_hexagon=100,
+            nx_hexagon=50,
             opacity=0.6,
             labels={"color": "Número de notificações"},
             min_count=1,
@@ -88,7 +88,8 @@ if uploaded_file is not None:
             center={"lat": lat_center, "lon": lon_center},
             zoom=zoom_ini,
             height=800,
-            width=800
+            width=800,
+            range_color = [0,20]
         )
 
     else:
