@@ -39,7 +39,7 @@ if uploaded_file is not None:
         df["municipio"] = "Município não informado"
 
     # Filtro de município na sidebar
-    municipios = sorted(df["municipio"].dropna().unique())
+    municipios = sorted(df["municipio"].unique())
     municipio_selecionado = st.sidebar.selectbox("Filtrar por município", ["Todos"] + municipios)
 
     if municipio_selecionado != "Todos":
