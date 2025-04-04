@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff  # Import necessário para hexbin
 import streamlit as st
+from streamlit_plotly_events import plotly_events
 
 # Configurações da página
 st.set_page_config(
@@ -166,3 +167,11 @@ if uploaded_file is not None:
     resultado = pd.concat([resultado, linha_total], ignore_index=True)
     resultado.columns = ['Município', 'Não achados', 'Total notificações', 'Porcentagem']
     st.dataframe(resultado, hide_index=True)
+
+
+    # Plotly event
+    selected_points = plotly_events(fig)
+    selected_points
+
+
+    
