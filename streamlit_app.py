@@ -171,7 +171,7 @@ if uploaded_file is not None:
 
     # Plotly event
     # Writes a component similar to st.write()
-    figa = px.line(x=[1], y=[1])
+    figa = px.line(x=[1,2], y=[1,2])
     selected_points = plotly_events(figa)
 
 
