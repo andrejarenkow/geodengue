@@ -204,7 +204,7 @@ if uploaded_file is not None:
     r = pdk.Deck(layers=[layer], initial_view_state=view_state)
     #r.to_html('demo.html')
     
-    r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style=pdk.map_styles.SATELLITE)
+    r = pdk.Deck(layers=[layer], initial_view_state=view_state, map_style=pdk.map_styles.SATELLITE)
     
     event = st.pydeck_chart(r, selection_mode="single-object", on_select="rerun",)
 
