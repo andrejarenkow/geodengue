@@ -35,11 +35,11 @@ if uploaded_file is not None:
         df["endereco"] = "Endereço não informado"
     if "CLASSI_FIN" not in df.columns:
         df["CLASSI_FIN"] = "Classificação não informada"
-    if "municipio" not in df.columns:
-        df["municipio"] = "Município não informado"
+    if "Municipio" not in df.columns:
+        df["Municipio"] = "Município não informado"
 
     # Filtro de município na sidebar
-    municipios = sorted(df["municipio"].unique())
+    municipios = sorted(df["Municipio"].unique())
     municipio_selecionado = st.sidebar.selectbox("Filtrar por município", ["Todos"] + municipios)
 
     if municipio_selecionado != "Todos":
