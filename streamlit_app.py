@@ -171,7 +171,7 @@ if uploaded_file is not None:
 
     # Plotly event
     # Writes a component similar to st.write()
-     layer = pdk.Layer(
+    layer = pdk.Layer(
             "ScatterplotLayer",
             data=df,
             get_position='[longitude, latitude]',
@@ -181,7 +181,7 @@ if uploaded_file is not None:
             auto_highlight=True
         )
     
-        tooltip = {
+    tooltip = {
             "html": "<b>Município:</b> {Municipio}<br/>"
                     "<b>Endereço:</b> {endereco}<br/>"
                     "<b>Classificação:</b> {CLASSI_FIN}<br/>"
@@ -189,11 +189,11 @@ if uploaded_file is not None:
             "style": {"backgroundColor": "steelblue", "color": "white"}
         }
     
-        view_state = pdk.ViewState(latitude=lat_center, longitude=lon_center, zoom=10, pitch=0)
+    view_state = pdk.ViewState(latitude=lat_center, longitude=lon_center, zoom=10, pitch=0)
     
-        r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
+    r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
     
-        st.pydeck_chart(r)
+    st.pydeck_chart(r)
 
 
 
