@@ -171,8 +171,29 @@ if uploaded_file is not None:
 
     # Plotly event
     # Writes a component similar to st.write()
-    figa = px.line(x=[1,2], y=[1,2])
-    selected_points = plotly_events(figa)
+     layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=df,
+            get_position='[longitude, latitude]',
+            get_fill_color="color",
+            get_radius=100,
+            pickable=True,
+            auto_highlight=True
+        )
+    
+        tooltip = {
+            "html": "<b>Município:</b> {Municipio}<br/>"
+                    "<b>Endereço:</b> {endereco}<br/>"
+                    "<b>Classificação:</b> {CLASSI_FIN}<br/>"
+                    "<b>Data:</b> {DT_SIN_PRI}",
+            "style": {"backgroundColor": "steelblue", "color": "white"}
+        }
+    
+        view_state = pdk.ViewState(latitude=lat_center, longitude=lon_center, zoom=10, pitch=0)
+    
+        r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
+    
+        st.pydeck_chart(r)
 
 
 
