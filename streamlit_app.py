@@ -67,7 +67,7 @@ if uploaded_file is not None:
             labels={"color": "Número de notificações"},
             min_count=1,
             color_continuous_scale="Viridis",
-            map_style="open-street-map",
+            mapbox_style="open-street-map",
             show_original_data=True,
             original_data_marker=dict(size=4, opacity=0.4, color="deeppink"),
             center={"lat": lat_center, "lon": lon_center},
