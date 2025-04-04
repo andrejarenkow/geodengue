@@ -78,7 +78,7 @@ if uploaded_file is not None:
         data=df_valid,
         get_position='[longitude, latitude]',
         get_fill_color="color",
-        get_radius=100,
+        get_radius=150,
         pickable=True,
         auto_highlight=True
     )
