@@ -179,7 +179,9 @@ if uploaded_file is not None:
             get_fill_color="color",
             get_radius=100,
             pickable=True,
-            auto_highlight=True
+            auto_highlight=True,
+            id="endereco",
+            pickable=True
         )
     
     tooltip = {
