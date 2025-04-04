@@ -171,7 +171,7 @@ if uploaded_file is not None:
 
     # Plotly event
     selected_points = plotly_events(fig)
-    selected_points
+    #selected_points
 
 
     
