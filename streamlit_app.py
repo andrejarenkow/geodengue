@@ -194,7 +194,8 @@ if uploaded_file is not None:
     
     r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
     
-    st.pydeck_chart(r)
+    event = st.pydeck_chart(r)
+    event.selection
 
 
 
