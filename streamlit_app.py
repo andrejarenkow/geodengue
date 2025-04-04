@@ -193,7 +193,7 @@ if uploaded_file is not None:
     
     view_state = pdk.ViewState(latitude=lat_center, longitude=lon_center, zoom=10, pitch=0)
     
-    r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style='mapbox://styles/mapbox/light-v9')
+    r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=tooltip, map_style=pdk.map_styles.SATELLITE)
     
     event = st.pydeck_chart(r, selection_mode="single-object", on_select="rerun",)
     event.selection['objects']['endereco'][0]
