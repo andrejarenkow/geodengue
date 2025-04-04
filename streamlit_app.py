@@ -110,7 +110,7 @@ if uploaded_file is not None:
             opacity=0.7,
             labels={"color": "Número de notificações"},
             min_count=1,
-            color_continuous_scale="Viridis",
+            color_continuous_scale="Reds",
             show_original_data=True,
             original_data_marker=dict(size=4, opacity=0.4, color="black"),
             center={"lat": lat_center, "lon": lon_center},
