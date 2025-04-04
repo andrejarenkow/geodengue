@@ -65,7 +65,7 @@ if uploaded_file is not None:
         (df['longitude'] < -58) | (df['longitude'] > -48)
     ].copy()
 
-    if not df_para_editar.empty:
+    if df_para_editar.empty:
         df_corrigido = st.data_editor(
             df_para_editar[['endereco', 'Municipio', 'latitude', 'longitude']],
             num_rows="dynamic",
