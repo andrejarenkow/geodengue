@@ -76,7 +76,7 @@ if uploaded_file is not None:
         for idx in df_corrigido.index:
             df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
             df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
-    else:
+    #else:
         #st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
 
     if usar_animacao:
