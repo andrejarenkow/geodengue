@@ -43,7 +43,7 @@ if uploaded_file is not None:
     municipio_selecionado = st.sidebar.selectbox("Filtrar por município", ["Todos"] + municipios)
 
     if municipio_selecionado != "Todos":
-        df = df[df["municipio"] == municipio_selecionado]
+        df = df[df["Municipio"] == municipio_selecionado]
 
     # Centralização do mapa
     lat_center = df["latitude"].mean()
