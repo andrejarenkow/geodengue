@@ -23,7 +23,7 @@ st.sidebar.header("Upload do Arquivo")
 uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv(uploaded_file, sep=';')
 
     df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
     df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
