@@ -25,6 +25,32 @@ uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file, sep=';')
 
+    dados['latitude'] = pd.to_numeric(dados['latitude'].str.replace('.', ''))
+    dados['longitude'] = pd.to_numeric(dados['longitude'].str.replace('.', ''))
+    
+    # Função para corrigir coordenadas
+    def corrigir_coordenada(numero):
+      try:  
+        # Certifique-se de que o número é positivo para manipulação
+        numero_transformado = abs(numero)
+    
+        # Obtenha o logaritmo de base 10 do número transformado
+        log_base10 = math.log10(numero_transformado)
+    
+        # Arredonde o logaritmo para baixo e subtraia 1 para obter a posição correta da vírgula
+        log_arredondado = math.floor(log_base10) - 1
+    
+        # Divida o número pela potência de 10 correspondente
+        numero_consertado = -1 * numero_transformado / (10 ** log_arredondado)
+      
+      except:
+        numero_consertado = numero
+    
+      return numero_consertado
+    
+    dados['latitude'] = dados['latitude'].apply(corrigir_coordenada)
+    dados['longitude'] = dados['longitude'].apply(corrigir_coordenada)
+
     df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
     df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
     df = df[df['DT_SIN_PRI'].dt.year == 2025]
