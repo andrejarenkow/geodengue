@@ -3,7 +3,7 @@ import plotly.express as px
 import plotly.figure_factory as ff  # Import necessário para hexbin
 import streamlit as st
 from streamlit_plotly_events import plotly_events
-import pydeck as pdk
+import pydeck as pdkhttps://github.com/andrejarenkow/geodengue/blob/main/streamlit_app.py
 
 # Configurações da página
 st.set_page_config(
@@ -25,8 +25,8 @@ uploaded_file = st.sidebar.file_uploader("Envie um arquivo CSV", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file, sep=';')
 
-    dados['latitude'] = pd.to_numeric(dados['latitude'].str.replace('.', ''))
-    dados['longitude'] = pd.to_numeric(dados['longitude'].str.replace('.', ''))
+    df['latitude'] = pd.to_numeric(df['latitude'].str.replace('.', ''))
+    df['longitude'] = pd.to_numeric(df['longitude'].str.replace('.', ''))
     
     # Função para corrigir coordenadas
     def corrigir_coordenada(numero):
@@ -48,8 +48,8 @@ if uploaded_file is not None:
     
       return numero_consertado
     
-    dados['latitude'] = dados['latitude'].apply(corrigir_coordenada)
-    dados['longitude'] = dados['longitude'].apply(corrigir_coordenada)
+    df['latitude'] = df['latitude'].apply(corrigir_coordenada)
+    df['longitude'] = df['longitude'].apply(corrigir_coordenada)
 
     df['CLASSI_FIN'] = df['CLASSI_FIN'].fillna('Em investigação').astype(str)
     df["DT_SIN_PRI"] = pd.to_datetime(df["DT_SIN_PRI"], errors="coerce")
