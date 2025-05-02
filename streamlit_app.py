@@ -80,6 +80,7 @@ if uploaded_file is not None:
     lon_center = (df['longitude'].max() + df['longitude'].min()) / 2
     zoom_ini = 5.5
     n_hex = 50
+    df
 
     if aplicar_filtro:
         df = df[df['Municipio'] == municipio]
