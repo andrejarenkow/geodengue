@@ -3,4 +3,3 @@ plotly
 streamlit
 streamlit_plotly_events
 pydeck
-math
