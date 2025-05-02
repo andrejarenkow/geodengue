@@ -88,24 +88,6 @@ if uploaded_file is not None:
         zoom_ini = 10
         n_hex = 30
 
-    st.subheader("Corrigir coordenadas (latitude/longitude)")
-    df_para_editar = df[
-        df['latitude'].isna() | df['longitude'].isna() |
-        (df['latitude'] < -34) | (df['latitude'] > -27) |
-        (df['longitude'] < -58) | (df['longitude'] > -48)
-    ].copy()
-
-    if df_para_editar.empty:
-        df_corrigido = st.data_editor(
-            df_para_editar[['endereco', 'Municipio', 'latitude', 'longitude']],
-            num_rows="dynamic",
-            use_container_width=True,
-            key="editor_corrigir_coords"
-        )
-
-        for idx in df_corrigido.index:
-            df.loc[idx, 'latitude'] = df_corrigido.loc[idx, 'latitude']
-            df.loc[idx, 'longitude'] = df_corrigido.loc[idx, 'longitude']
     #else:
         #st.info("Nenhum registro com coordenadas ausentes ou suspeitas.")
 
